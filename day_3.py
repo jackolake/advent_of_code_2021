@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # Part 1
     gamma_str = counting(df, majority_win=True, tie_breaker='1', trim=False)
     gamma = int(gamma_str, 2)
-    epsilon_str = counting(df, majority_win=False, tie_breaker='0', trim=Fals3)
+    epsilon_str = counting(df, majority_win=False, tie_breaker='0', trim=False)
     epsilon = int(epsilon_str, 2)
     print(gamma*epsilon)  # 1458194
 
