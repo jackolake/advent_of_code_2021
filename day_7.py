@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     # Part 2
     fuel_map = [0]  # fuel_map[step] = fuel
-    for i in range(1, max_pos + 1):
+    for i in range(1, max_pos + 1):  # pre-calculate
         fuel_map.append(fuel_map[i - 1] + i)
     part2 = dict([(alignment, sum([fuel_map[int(abs(pos-alignment))] for pos in crab_positions]))
                  for alignment in range(max_pos + 1)])  # {alignment: fuel}
