@@ -66,7 +66,7 @@ if __name__ == '__main__':
     part2 = 0
     for signal_pattern, output_value in zip(signal_patterns, output_values):
         m = create_map(signal_pattern)  # {digit: encoding}
-        lookup = dict([(''.join(sorted(list(v))), k) for k, v in m.items()])
-        decoded = [lookup[''.join(sorted(encoding))] for encoding in output_value]
-        part2 += int(''.join([str(c) for c in decoded]))
+        lookup = dict([(''.join(sorted(list(v))), k) for k, v in m.items()])  # {'cf': 1, 'abcf': 4, 'cfg': 7,... }
+        decoded = [str(lookup[''.join(sorted(encoding))]) for encoding in output_value]  # ['1', '2', '9', '3']
+        part2 += int(''.join(decoded))  # 1293
     print(part2)  # 1027483
