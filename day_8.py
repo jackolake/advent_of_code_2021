@@ -59,15 +59,14 @@ if __name__ == '__main__':
             signal_patterns.append(tokens[:10])
             output_values.append(tokens[-4:])
 
-    part1, part2 = 0, 0
+    # Part 1  count 1,4,7,8 (has length 2, 4, 3, 7)
+    print(sum([len([o for o in output_value if len(o) in [2, 4, 3, 7]]) for output_value in output_values]))  # 519
+
+    # Part 2
+    part2 = 0
     for signal_pattern, output_value in zip(signal_patterns, output_values):
         m = create_map(signal_pattern)  # {digit: encoding}
         lookup = dict([(''.join(sorted(list(v))), k) for k, v in m.items()])
         decoded = [lookup[''.join(sorted(encoding))] for encoding in output_value]
-        for num in decoded:
-            if num in [1, 4, 7, 8]:
-                part1 += 1
         part2 += int(''.join([str(c) for c in decoded]))
-
-    print(part1)  # 519
     print(part2)  # 1027483
