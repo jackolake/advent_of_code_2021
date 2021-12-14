@@ -2,7 +2,7 @@ from collections import defaultdict
 
 
 if __name__ == '__main__':
-    token_dict = defaultdict(int)
+    token_dict = defaultdict(int)   # NNCB => {'NN': 1, 'NC': 1, 'CB': 1} double counting of elements handled at the end
     instructions = {}  # { keyword: what to add between them }
 
     # inputs
@@ -34,12 +34,11 @@ if __name__ == '__main__':
 
     # Count elements
     element_counts = defaultdict(int)
-    first_token = list(token_dict.keys())[0]
+    first_token = polymer_string[:2]
     for token, count in token_dict.items():
-        element_counts[token[0]] += count
-        element_counts[token[1]] += count
-        if first_token != token:
-            element_counts[token[0]] -= count
+        if first_token == token:                # Input  AA AB BC CD DE
+            element_counts[token[0]] += count   # Count  A_
+        element_counts[token[1]] += count       # Count  _A _B _C _D _E
     # Display result
     max_element_count = max(list(element_counts.values()))
     min_element_count = min(list(element_counts.values()))
