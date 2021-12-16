@@ -13,12 +13,8 @@ class Node(object):
 
 
 def hex_to_bin_packet(s):
-    bs = bin(int(s, 16))[2:]  # hex to bin
     # binary number is padded with leading zeroes until its length is a multiple of four bits
-    original_length = len(bs)
-    target_length = math.ceil(original_length/4) * 4
-    ret = bs.zfill(target_length)
-    return ret, len(ret) - original_length  # (output, zeros_padded)
+    return bin(int(s, 16))[2:].zfill(len(s) * 4)
 
 
 if __name__ == '__main__':
@@ -27,7 +23,7 @@ if __name__ == '__main__':
     # inputs
     with open('inputs/day_16.txt', 'r') as txt:
         hex_input = [line.strip() for line in txt.readlines()][0]
-    bin_packet, padded_zeros = hex_to_bin_packet(hex_input)
+    bin_packet = hex_to_bin_packet(hex_input)
     root = Node(code=bin_packet, version=0, type=None, parent=None, childrens=[])
 
     # Define method
@@ -52,8 +48,6 @@ if __name__ == '__main__':
                             childrens=[], value=value)
             else:  # operator packet
                 length_type_id = s[6]
-                if packet_type_id >= 5 and parent.childrens and len(parent.childrens) == 2:
-                    print('wtf')
                 node = Node(code=s, version=packet_version, type=packet_type_id, parent=parent, childrens=[], value=0)
                 if length_type_id == '0':  # next 15 bits = total length in bits of the sub-packets
                     subpackets_length = int(s[7: 22], 2)
@@ -95,7 +89,6 @@ if __name__ == '__main__':
         return 0
 
     # part1
-    print(versions)
     print(traverse(root, part1=True))  # 875
     # part2
-    # print(traverse(root, part1=False))  # 875
+    print(traverse(root, part1=False))  # 875
