@@ -18,8 +18,6 @@ def hex_to_bin_packet(s):
 
 
 if __name__ == '__main__':
-    versions = []
-
     # inputs
     with open('inputs/day_16.txt', 'r') as txt:
         hex_input = [line.strip() for line in txt.readlines()][0]
@@ -32,7 +30,6 @@ if __name__ == '__main__':
         while message_parsed < message_limit and len(s) >= 6 and int(s, 2) != 0:
             packet_version = int(s[:3], 2)
             packet_type_id = int(s[3:6], 2)
-            versions.append(packet_version)
             if packet_type_id == 4:  # literal value
                 literal_string = s[6:]
                 value_string = ''
@@ -52,8 +49,7 @@ if __name__ == '__main__':
                 if length_type_id == '0':  # next 15 bits = total length in bits of the sub-packets
                     subpackets_length = int(s[7: 22], 2)
                     read_packet(s[22:22 + subpackets_length], parent=node)
-                    s = read_packet(s[22 + subpackets_length:], parent=parent,
-                                    message_limit=message_limit - message_parsed - 1)  # counting this as well
+                    s = s[22 + subpackets_length:]  # get rid of substring which is processed
                 else:  # next 11 bits = number of sub-packets immediately contained
                     num_of_packets = int(s[7: 18], 2)
                     s = read_packet(s[18:], parent=node, message_limit=num_of_packets)
@@ -64,15 +60,16 @@ if __name__ == '__main__':
 
     # Part 1
     read_packet(bin_packet, parent=root)
-    root = root.childrens[0]
+    root = root.childrens[0]  # Skip the dummy root
 
     def traverse(node, part1):
         if node.type == 4:  # Literal node
             return node.version if part1 else node.value
         # Operator node
-        vals = [node.version] if part1 else []
-        vals = vals + [traverse(child, part1=part1) for child in node.childrens]
-        if part1 or node.type == 0:  # sum
+        vals = [traverse(child, part1=part1) for child in node.childrens]
+        if part1:
+            return sum(vals) + node.version
+        if node.type == 0:  # sum
             return sum(vals)
         elif node.type == 1:    # product
             return reduce(lambda x, y: x*y, vals)
