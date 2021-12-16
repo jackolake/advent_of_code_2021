@@ -52,7 +52,7 @@ if __name__ == '__main__':
                 if length_type_id == '0':  # next 15 bits = total length in bits of the sub-packets
                     subpackets_length = int(s[7: 22], 2)
                     read_packet(s[22:22 + subpackets_length], parent=node)
-                    s = read_packet(s[22 + subpackets_length:], parent=node,
+                    s = read_packet(s[22 + subpackets_length:], parent=parent,
                                     message_limit=message_limit - message_parsed - 1)  # counting this as well
                 else:  # next 11 bits = number of sub-packets immediately contained
                     num_of_packets = int(s[7: 18], 2)
@@ -91,4 +91,4 @@ if __name__ == '__main__':
     # part1
     print(traverse(root, part1=True))  # 875
     # part2
-    print(traverse(root, part1=False))  # 875
+    print(traverse(root, part1=False))  # 1264857437203
