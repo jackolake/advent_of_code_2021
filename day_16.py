@@ -1,5 +1,4 @@
 import math
-from functools import reduce
 
 
 class Node(object):  # Tree node
@@ -10,11 +9,6 @@ class Node(object):  # Tree node
         self.parent = parent
         self.childrens = childrens
         self.value = value
-
-
-def hex_to_bin_packet(s):
-    # binary number is padded with leading zeroes until its length is a multiple of four bits
-    return bin(int(s, 16))[2:].zfill(len(s) * 4)
 
 
 def read_packet(s, parent, message_limit=math.inf):  # substring, parent node, message_limit
@@ -51,40 +45,41 @@ def read_packet(s, parent, message_limit=math.inf):  # substring, parent node, m
     return s
 
 
+# Tree traversal function
+def traverse(node, part1):
+    if node.type == 4:  # Literal node
+        return node.version if part1 else node.value
+    # Operator node
+    vals = [traverse(child, part1=part1) for child in node.childrens]
+    if part1:
+        return sum(vals) + node.version
+    if node.type == 0:  # sum
+        return sum(vals)
+    elif node.type == 1:    # product
+        return math.prod(vals)
+    elif node.type == 2:
+        return min(vals)
+    elif node.type == 3:
+        return max(vals)
+    elif node.type == 5:
+        return 1 if vals[0] > vals[1] else 0
+    elif node.type == 6:
+        return 1 if vals[0] < vals[1] else 0
+    elif node.type == 7:
+        return 1 if vals[0] == vals[1] else 0
+    return 0
+
+
 if __name__ == '__main__':
     # inputs
     with open('inputs/day_16.txt', 'r') as txt:
         hex_input = [line.strip() for line in txt.readlines()][0]
-    bin_packet = hex_to_bin_packet(hex_input)
+    bin_packet = bin(int(hex_input, 16))[2:].zfill(len(hex_input) * 4)  # Hex to binary then zero-pad to multiple of 4
     root = Node(code=bin_packet, version=0, type=None, parent=None, childrens=[])
 
     # Parse input into tree
     read_packet(bin_packet, parent=root)
     root = root.childrens[0]  # Skip the dummy root
-
-    # Tree traversal function
-    def traverse(node, part1):
-        if node.type == 4:  # Literal node
-            return node.version if part1 else node.value
-        # Operator node
-        vals = [traverse(child, part1=part1) for child in node.childrens]
-        if part1:
-            return sum(vals) + node.version
-        if node.type == 0:  # sum
-            return sum(vals)
-        elif node.type == 1:    # product
-            return reduce(lambda x, y: x*y, vals)
-        elif node.type == 2:
-            return min(vals)
-        elif node.type == 3:
-            return max(vals)
-        elif node.type == 5:
-            return 1 if vals[0] > vals[1] else 0
-        elif node.type == 6:
-            return 1 if vals[0] < vals[1] else 0
-        elif node.type == 7:
-            return 1 if vals[0] == vals[1] else 0
-        return 0
 
     # part1
     print(traverse(root, part1=True))  # 875
